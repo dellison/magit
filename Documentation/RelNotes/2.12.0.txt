@@ -75,6 +75,8 @@ Changes since v2.11.0
 * While it exists, the stash created by `git rebase `--autostash' is
   now also displayed in the list of stashes.  #3146
 
+* TODO Added command `magit-branch-pull-request'.
+
 * Added command `magit-browse-pull-request'.
 
 Fixes since v2.11.0
