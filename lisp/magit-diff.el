@@ -2278,16 +2278,31 @@ are highlighted."
                              (`("="   t) 'magit-diff-their-highlight)
                              (`(">" nil) nil)))
                'magit-diff-conflict-heading)
-              ((looking-at (if merging  "^\\(\\+\\| \\+\\)" "^\\+"))
+              ((looking-at (if merging "^\\(\\+\\| \\+\\)" "^\\+"))
+               (magit-diff-paint-tab merging)
                (magit-diff-paint-whitespace merging)
                (or stage
                    (if highlight 'magit-diff-added-highlight 'magit-diff-added)))
-              ((looking-at (if merging  "^\\(-\\| -\\)" "^-"))
+              ((looking-at (if merging "^\\(-\\| -\\)" "^-"))
+               (magit-diff-paint-tab merging)
                (if highlight 'magit-diff-removed-highlight 'magit-diff-removed))
               (t
+               (magit-diff-paint-tab merging)
                (if highlight 'magit-diff-context-highlight 'magit-diff-context))))
             (forward-line))))))
   (magit-diff-update-hunk-refinement section))
+
+(defvar magit-diff-shorten-initial-tab t)
+
+(defun magit-diff-paint-tab (merging)
+  (when magit-diff-shorten-initial-tab
+    (let ((offset (+ (point) (if merging 2 1))))
+      (when (= (char-after offset) 9)
+        ;; FIXME changing the width of the first tab causes the width
+        ;; of later tabs to be adjusted.  So all widths have to be set.
+        (put-text-property offset (1+ offset) 'display
+                           `((space :width
+                                    ,(- tab-width (if merging 2 1)))))))))
 
 (defun magit-diff-paint-whitespace (merging)
   (when (and magit-diff-paint-whitespace
